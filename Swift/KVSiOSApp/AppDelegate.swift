@@ -15,69 +15,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
 
-        // Warn user if configuration not updated
-        if (cognitoIdentityUserPoolId == "REPLACEME") {
-            let alertController = UIAlertController(title: "Invalid Configuration",
-                                                    message: "Please configure user pool constants in Constants.swift and in the awsconfiguration.json file.",
-                                                    preferredStyle: .alert)
-            let okAction = UIAlertAction(title: "Ok", style: .default, handler: nil)
-            alertController.addAction(okAction)
-
-            self.window?.rootViewController!.present(alertController, animated: true, completion: nil)
-        }
         // setup logging
         AWSDDLog.sharedInstance.logLevel = .verbose
 
-        // setup service configuration
-        let serviceConfiguration = AWSServiceConfiguration(region: cognitoIdentityUserPoolRegion, credentialsProvider: nil)
-
-        // create pool configuration
-        let poolConfiguration = AWSCognitoIdentityUserPoolConfiguration(clientId: cognitoIdentityUserPoolAppClientId,
-                                                                        clientSecret: cognitoIdentityUserPoolAppClientSecret,
-                                                                        poolId: cognitoIdentityUserPoolId)
-
-        // initialize user pool client
-        AWSCognitoIdentityUserPool.register(with: serviceConfiguration, userPoolConfiguration: poolConfiguration, forKey: awsCognitoUserPoolsSignInProviderKey)
-
-        AWSMobileClient.default().initialize { (userState, error) in
-            if let error = error {
-                print("error: \(error.localizedDescription)")
-
-                return
-            }
-
-            guard let userState = userState else {
-                return
-            }
-            print("The user is \(userState.rawValue).")
-            self.storyboard = UIStoryboard(name: "Main", bundle: nil)
-
-            switch userState {
-            case .signedIn:
-                self.navigationController = self.storyboard?.instantiateViewController(withIdentifier: "channelConfig") as? UINavigationController
-                self.channelConfigViewController = self.navigationController?.viewControllers[0] as? ChannelConfigurationViewController
-                DispatchQueue.main.async {
-                    self.navigationController!.popToRootViewController(animated: true)
-                    if (!self.navigationController!.isViewLoaded
-                        || self.navigationController!.view.window == nil) {
-                        self.window?.rootViewController?.present(self.navigationController!,
-                                                                 animated: true,
-                                                                 completion: nil)
-                    }
-                }
-                break
-            default:
-                self.navigationController = self.storyboard?.instantiateViewController(withIdentifier: "signinController") as? UINavigationController
-                self.signInViewController = self.navigationController?.viewControllers[0] as? SignInViewController
-                DispatchQueue.main.async {
-                    self.navigationController!.popToRootViewController(animated: true)
-                    if (!self.navigationController!.isViewLoaded
-                        || self.navigationController!.view.window == nil) {
-                        self.window?.rootViewController?.present(self.navigationController!,
-                                                                 animated: true,
-                                                                 completion: nil)
-                    }
-                }
+        self.storyboard = UIStoryboard(name: "Main", bundle: nil)
+        self.navigationController = self.storyboard?.instantiateViewController(withIdentifier: "channelConfig") as? UINavigationController
+        self.channelConfigViewController = self.navigationController?.viewControllers[0] as? ChannelConfigurationViewController
+        DispatchQueue.main.async {
+            self.navigationController!.popToRootViewController(animated: true)
+            if (!self.navigationController!.isViewLoaded
+                || self.navigationController!.view.window == nil) {
+                self.window?.rootViewController?.present(self.navigationController!,
+                                                         animated: true,
+                                                         completion: nil)
             }
         }
         return true

@@ -25,6 +25,9 @@ class ChannelConfigurationViewController: UIViewController, UITextFieldDelegate 
     var signalingConnected: Bool = false
     var sendAudioEnabled: Bool = true
     var remoteSenderClientId: String?
+    let accessKey = "REPLACE_ME"
+    let secretKey = "REPLACE_ME"
+    lazy var credentialsProvider = AWSStaticCredentialsProvider(accessKey: accessKey, secretKey: secretKey)
     lazy var localSenderId: String = {
         return connectAsViewClientId
     }()
@@ -88,12 +91,6 @@ class ChannelConfigurationViewController: UIViewController, UITextFieldDelegate 
         connectAsRole(role: masterRole, connectAsUser: (connectAsMasterKey))
     }
 
-    @IBAction func signOut(_ sender: AnyObject) {
-        AWSMobileClient.default().signOut()
-        let mainStoryBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        self.present((mainStoryBoard.instantiateViewController(withIdentifier: "signinController") as? UINavigationController)!, animated: true, completion: nil)
-    }
-
     func connectAsRole(role: String, connectAsUser: String) {
         guard let channelNameValue = self.channelName.text?.trim(), !channelNameValue.isEmpty else {
             let alertController = UIAlertController(title: "Missing Required Fields",
@@ -131,7 +128,7 @@ class ChannelConfigurationViewController: UIViewController, UITextFieldDelegate 
             print("Generated clientID is \(self.localSenderId)")
         }
         // Kinesis Video Client Configuration
-        let configuration = AWSServiceConfiguration(region: self.awsRegionType, credentialsProvider: AWSMobileClient.default())
+        let configuration = AWSServiceConfiguration(region: self.awsRegionType, credentialsProvider: credentialsProvider)
         AWSKinesisVideo.register(with: configuration!, forKey: awsKinesisVideoKey)
 
         retrieveChannelARN(channelName: channelNameValue)
@@ -270,10 +267,7 @@ class ChannelConfigurationViewController: UIViewController, UITextFieldDelegate 
                     print("Error: Unknown endpoint protocol ", endpoint.protocols, "for endpoint" + endpoint.description())
                 }
             }
-            AWSMobileClient.default().getAWSCredentials { credentials, _ in
-                self.AWSCredentials = credentials
-            }
-
+            self.AWSCredentials = .init(accessKey: self.accessKey, secretKey: self.secretKey, sessionKey: "", expiration: nil)
             var httpURlString = (wssResourceEndpointItem?.resourceEndpoint!)!
                 + "?X-Amz-ChannelARN=" + self.channelARN!
             if !self.isMaster! {
@@ -299,7 +293,7 @@ class ChannelConfigurationViewController: UIViewController, UITextFieldDelegate 
             let configuration =
                 AWSServiceConfiguration(region: self.awsRegionType,
                                         endpoint: endpoint,
-                                        credentialsProvider: AWSMobileClient.default())
+                                        credentialsProvider: self.credentialsProvider)
             AWSKinesisVideoSignaling.register(with: configuration!, forKey: awsKinesisVideoKey)
             let kvsSignalingClient = AWSKinesisVideoSignaling(forKey: awsKinesisVideoKey)
 

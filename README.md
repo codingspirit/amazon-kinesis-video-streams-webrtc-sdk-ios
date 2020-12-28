@@ -1,9 +1,9 @@
 
-# The Amazon Kinesis Video WebRTC Sample
+# The Amazon Kinesis Video WebRTC Sample With AK/SK
 [![Build Status](https://travis-ci.org/awslabs/amazon-kinesis-video-streams-webrtc-sdk-ios.svg?branch=master)](https://travis-ci.org/awslabs/amazon-kinesis-video-streams-webrtc-sdk-ios)
 [![Coverage Status](https://codecov.io/gh/awslabs/amazon-kinesis-video-streams-webrtc-sdk-ios/branch/master/graph/badge.svg)](https://codecov.io/gh/awslabs/amazon-kinesis-video-streams-webrtc-sdk-ios)
 
-This sample demonstrates the Amazon KinesisVideoStreams and KinesisVideoSignaling framework found in the AWS Mobile SDK for iOS.
+This sample demonstrates the Amazon KinesisVideoStreams and KinesisVideoSignaling framework found in the AWS Mobile SDK for iOS using access key/secret key without Cognito.
 
 ## Requirements
 
@@ -27,47 +27,19 @@ To download the WebRTC SDK in iOS, run the following command:
 
         pod install
 
-3. Create an Amazon Cognito User Pool. Follow the 4 steps under **Creating your Cognito Identity user pool** in this [blog post](http://mobile.awsblog.com/post/TxGNH1AUKDRZDH/Announcing-Your-User-Pools-in-Amazon-Cognito).
+3. Open `KinesisVideoWebRTCDemoApp.xcworkspace` (File location: KVSiOS/Swift/AWSKinesisVideoWebRTCDemoApp.xcworkspace).
 
-4. Open `KinesisVideoWebRTCDemoApp.xcworkspace` (File location: KVSiOS/Swift/AWSKinesisVideoWebRTCDemoApp.xcworkspace).
+4. Add your AK/SK info into [ChannelConfigurationViewController.swift](https://github.com/codingspirit/amazon-kinesis-video-streams-webrtc-sdk-ios/blob/19c90e58fa7195ba4b504bbc4e92cb4d3ef9b14a/Swift/KVSiOSApp/ChannelConfigurationViewController.swift#L28):
 
-5. Open **Constants.swift**. Set **CognitoIdentityUserPoolRegion**, **CognitoIdentityUserPoolId**, **CognitoIdentityUserPoolAppClientId** and **CognitoIdentityUserPoolAppClientSecret** to the values obtained when you created your user pool.
 ```swift
-        let CognitoIdentityUserPoolRegion: AWSRegionType = .Unknown
-        let CognitoIdentityUserPoolId = "YOUR_USER_POOL_ID"
-        let CognitoIdentityUserPoolAppClientId = "YOUR_APP_CLIENT_ID"
-        let CognitoIdentityUserPoolAppClientSecret = "YOUR_APP_CLIENT_SECRET"
+    let accessKey = "REPLACE_ME"
+    let secretKey = "REPLACE_ME"
 ```
-Replace the “REPLACEME” places in each of these files with the appropriate AWS Credentials:
-  *  _awsconfiguration.json_ (path: KVSiOS/Swift/KVSiOSApp/awsconfiguration.json)
-  *     _Constants.swift_ (path: KVSiOS/Swift/KVSiOSApp/Constants.swift)
 
-6. To build and run, click the play button on the XCode menu. 
-The following step-by-step instructions describe how to download, build, and run the Kinesis Video Streams WebRTC SDK in iOS.
-
-The following cocoa pod dependencies are included in the Podfile and need to pod installed:
-
- * Starscream
- * Common Crytpo
- * WebRTC.framework: this is the GoogleWebRTC module framework package (bit code disabled).
- * AWSMobileClient
- * AWSCognito
- * AWSKinesisVideo
- * AWSKinesisVideoSignaling
- 
-
+5. To build and run, click the play button on the XCode menu. The following step-by-step instructions describe how to download, build, and run the Kinesis Video Streams WebRTC SDK in iOS.
 
 #### Run the iOS Sample Application
-Building the iOS sample application installs the AWSKinesisVideoWebRTCDemoApp on your iOS device. Using this app, you can verify live audio/video streaming between mobile, web and IoT device clients (camera). The procedure below describes some of these scenarios. 
-
-Complete the following steps:
-
-1.    On your iOS device, open AWSKinesisVideoWebRTCDemoApp and login using the AWS user credentials from Set Up an AWS Account and Create an Administrator. (Note: Cognito settings can be tuned through your Cognito User Pool in the AWS management Console)
-2.    On successful sign-in, the channel configuration view is displayed where the **channel-name, client-id (optional) and region-name** have to be configured. 
-
-#### Run the Integration Tests  
-1.   To run the integration tests, the test user has to be created with the appropiate test password as in the TestConstants.swift file located at amazon-kinesis-video-streams-webrtc-sdk-ios/Swift/AWSKinesisVideoWebRTCDemoAppUITests/TestConstants.swift
-
+Building the iOS sample application installs the AWSKinesisVideoWebRTCDemoApp on your iOS device. Using this app, you can verify live audio/video streaming between mobile, web and IoT device clients (camera). The procedure below describes some of these scenarios.
 
 ##### Note
 *    Ensure that in all the cases described below, both the client applications use the same signaling channel name, region, viewer-id/client-id and the AWS account id.
